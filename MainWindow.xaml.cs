@@ -177,15 +177,15 @@ namespace Mastermind
 
         private void Raten(int[] geraten)
         {
-            string[] ausgabe = new string[4];
+            List<string> ausgabe = new List<string>(4);
             for (int i = 0; i < geraten.Length; i++)
             {
                 if (geraten[i] == code[i]) ausgabe[i] = "X";
                 else if (code.Contains(geraten[i])) ausgabe[i] = "O";
                 else ausgabe[i] = " ";
             }
-            Mischen(ausgabe);
-
+            //Mischen(ausgabe);
+            ausgabe = ausgabe.OrderBy(i => rnd.Next()).ToList();
         }
 
         public void Mischen(string[] stringArray) 
