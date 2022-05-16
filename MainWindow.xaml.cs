@@ -24,7 +24,7 @@ namespace Mastermind
         List<TextBox> textBoxes = new List<TextBox>();
         int[] code = new int[4];//0=Schwarz, 1=Blau, 2=Rot, 3=Grün
         Random rnd = new Random();
-        int Runde = 0;
+        int Runde;
         public MainWindow()
         {
             InitializeComponent();
@@ -53,18 +53,29 @@ namespace Mastermind
         /// <param name="e"></param>
         private void Btn_Start_Click(object sender, RoutedEventArgs e)
         {
+            ellipses.Clear();
+            textBoxes.Clear();
+            Spielfeld.Children.Clear();
+            Runde = 0;
             NeueZeile();
             for(int i=0; i<4; i++)
             {
                 code[i] = rnd.Next(0,4);
             }
+            Spielregeln.Text += "\n";
+            for (int i = 0; i < 4; i++)
+            {
+                Spielregeln.Text += code[i];
+            }
+            
             Btn_Start.IsEnabled = false;
             Btn_Spiel.IsEnabled = true;
+
         }
 
         
         /// <summary>
-        /// Dem Spielfeld wird eine neue zeile hinzugrfügt.
+        /// Dem Spielfeld wird eine neue Zeile hinzugrfügt.
         /// </summary>
         private void NeueZeile()
         {
@@ -74,7 +85,17 @@ namespace Mastermind
             Spielfeld.RowDefinitions.Add(rowDefinition);
 
             //Ellipsen
+
+            //Ellipsen der vorigen Runde deaktivieren
+            if (Runde > 0)
+            {
+                ellipses.ForEach(x => x.IsEnabled = false); ;
+            }
+
+            //Liste leeren
             ellipses.Clear();
+
+            //neue Ellipsen erstellen
             for (int i = 0; i < 4; i++)
             {
                 //Ellipse definieren
@@ -87,22 +108,22 @@ namespace Mastermind
                 //Rechtklickmenü für Farbwahl
                 ContextMenu contextMenu = new ContextMenu();
                 MenuItem menuItemBlack = new MenuItem();
-                menuItemBlack.Header = "Schwarz";
+                menuItemBlack.Header = "0: Schwarz";
                 menuItemBlack.Click += new RoutedEventHandler(EllipseSchwarzFärben);
                 contextMenu.Items.Add(menuItemBlack);
 
                 MenuItem menuItemBlue = new MenuItem();
-                menuItemBlue.Header = "Blau";
+                menuItemBlue.Header = "1: Blau";
                 menuItemBlue.Click += new RoutedEventHandler(EllipseBlauFärben);
                 contextMenu.Items.Add(menuItemBlue);
 
                 MenuItem menuItemRed = new MenuItem();
-                menuItemRed.Header = "Rot";
+                menuItemRed.Header = "2: Rot";
                 menuItemRed.Click += new RoutedEventHandler(EllipseRotFärben);
                 contextMenu.Items.Add(menuItemRed);
 
                 MenuItem menuItemGreen = new MenuItem();
-                menuItemGreen.Header = "Grün";
+                menuItemGreen.Header = "3: Grün";
                 menuItemGreen.Click += new RoutedEventHandler(EllipseGrünFärben);
                 contextMenu.Items.Add(menuItemGreen);
 
@@ -129,8 +150,7 @@ namespace Mastermind
             Spielfeld.Children.Add(textBox);
             Grid.SetRow(textBox, Runde);
             Grid.SetColumn(textBox, 4);
-            textBoxes.Add(textBox);
-
+            textBoxes.Add(textBox);           
 
             Runde++;
         }
@@ -177,15 +197,40 @@ namespace Mastermind
 
         private void Raten(int[] geraten)
         {
-            List<string> ausgabe = new List<string>(4);
+            List<string> ausgabe = new List<string>();
+            
             for (int i = 0; i < geraten.Length; i++)
             {
-                if (geraten[i] == code[i]) ausgabe[i] = "X";
-                else if (code.Contains(geraten[i])) ausgabe[i] = "O";
-                else ausgabe[i] = " ";
+                Console.Write(code[i]);
+                if (geraten[i] == code[i]) ausgabe.Add("X");
+                else if (code.Contains(geraten[i])) ausgabe.Add("O");
+                else ausgabe.Add(" ");
             }
             //Mischen(ausgabe);
             ausgabe = ausgabe.OrderBy(i => rnd.Next()).ToList();
+            string ausgabetext="";
+            ausgabe.ForEach(x => ausgabetext += x+" ");
+            textBoxes[Runde - 1].Text = ausgabetext;
+
+            Spielregeln.Text += "\n";
+            for (int i = 0; i < 4; i++)
+            {
+                Spielregeln.Text += geraten[i];
+            }
+            Spielregeln.Text += "\t";
+            for (int i = 0; i < 4; i++)
+            {
+                Spielregeln.Text += code[i];
+            }
+
+            if (ausgabetext == "X X X X ")
+            {
+                MessageBox.Show("Sie haben den Code geknackt!", "Gewonnen!");
+                Btn_Start.IsEnabled = true;
+                Btn_Spiel.IsEnabled = false;
+            }
+
+            NeueZeile();
         }
 
         public void Mischen(string[] stringArray) 
