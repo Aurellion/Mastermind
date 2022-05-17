@@ -62,11 +62,11 @@ namespace Mastermind
             {
                 code[i] = rnd.Next(0,4);
             }
-            Spielregeln.Text += "\n";
-            for (int i = 0; i < 4; i++)
-            {
-                Spielregeln.Text += code[i];
-            }
+            //Spielregeln.Text += "\n";
+            //for (int i = 0; i < 4; i++)
+            //{
+            //    Spielregeln.Text += code[i];
+            //}
             
             Btn_Start.IsEnabled = false;
             Btn_Spiel.IsEnabled = true;
@@ -203,7 +203,7 @@ namespace Mastermind
             {
                 Console.Write(code[i]);
                 if (geraten[i] == code[i]) ausgabe.Add("X");
-                else if (code.Contains(geraten[i])) ausgabe.Add("O");
+                else if (geraten.Contains(code[i])) ausgabe.Add("O");
                 else ausgabe.Add(" ");
             }
             //Mischen(ausgabe);
@@ -212,16 +212,16 @@ namespace Mastermind
             ausgabe.ForEach(x => ausgabetext += x+" ");
             textBoxes[Runde - 1].Text = ausgabetext;
 
-            Spielregeln.Text += "\n";
-            for (int i = 0; i < 4; i++)
-            {
-                Spielregeln.Text += geraten[i];
-            }
-            Spielregeln.Text += "\t";
-            for (int i = 0; i < 4; i++)
-            {
-                Spielregeln.Text += code[i];
-            }
+            //Spielregeln.Text += "\n";
+            //for (int i = 0; i < 4; i++)
+            //{
+            //    Spielregeln.Text += geraten[i];
+            //}
+            //Spielregeln.Text += "\t";
+            //for (int i = 0; i < 4; i++)
+            //{
+            //    Spielregeln.Text += code[i];
+            //}
 
             if (ausgabetext == "X X X X ")
             {
